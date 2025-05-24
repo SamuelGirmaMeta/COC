@@ -202,7 +202,7 @@ Object.assign(modalContent.style, {
     db.ref(`participants/${uid}`).update({ verified: true, rejectionReason: "" })
       .then(() => {
         
-        reason = "Congratulations! We will be contacting you soon!";
+        let reason = "Congratulations! We will be contacting you soon!";
         sendEmail(info.name, info.email, reason, true);
         alert(`Accepted ${info.email}`);
         closeModal();
