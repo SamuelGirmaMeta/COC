@@ -201,6 +201,10 @@ Object.assign(modalContent.style, {
   document.getElementById("acceptBtn").onclick = () => {
     db.ref(`participants/${uid}`).update({ verified: true, rejectionReason: "" })
       .then(() => {
+        if(reason == null)
+        {
+            reason = "Congratulations! We will be contacting you soon!";
+        }
         sendEmail(info.name, info.email, reason, true);
         alert(`Accepted ${info.email}`);
         closeModal();
