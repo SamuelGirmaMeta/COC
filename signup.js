@@ -48,7 +48,7 @@ form.addEventListener("submit", async (e) => {
 
     // Send verification email
     await user.sendEmailVerification();
-
+	await auth.currentUser.getIdToken(true);
     // Save user data
     await db.ref("participants/" + user.uid).set({
       name,
@@ -65,7 +65,25 @@ form.addEventListener("submit", async (e) => {
     });
 
     message.style.color = "#66ff66";
-    message.textContent = "Account created! Please check your email to verify.";
+    message.textContent = "Account created! Please check your email to verify. Don't close this tab until you have verified your account!";
+// Check email verification every 5 seconds
+const checkVerificationInterval = setInterval(async () => {
+  await user.reload(); // Refresh user data
+  if (user.emailVerified) {
+    clearInterval(checkVerificationInterval); // Stop checking once verified
+
+    // Update in database
+    await db.ref("participants/" + user.uid).update({
+      verified: true,
+      emailVerified: true
+    });
+
+    message.style.color = "#66ff66";
+    message.textContent = "Email verified! You may now close this tab.";
+    verifyNotice.innerHTML = "<strong>Email verified!</strong> Thank you.";
+  }
+}, 5000);
+
     
     form.reset();
     form.classList.add("hidden");
